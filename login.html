@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Login</h2>
+<nav>
+  <ul>
+    <li><a href="index.html" class="button active">Home</a></li>
+    <li><a href="books.html" class="button">My Books</a></li>
+    <div class="auth-buttons">
+      <li><a href="login.html" class="button" id="login-btn">Login</a></li>
+      <li><a href="signup.html" class="button" id="signup-btn">Sign Up</a></li>
+      <li><a href="#" class="button" id="logout-btn" style="display: none;">Logout</a></li>
+    </div>
+</nav>
+
+<form id="login-form" onsubmit="login(event)">
+  <label for="username">Username:</label>
+  <input type="text" id="username" required><br><br>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" required><br><br>
+
+  <button type="submit">Login</button>
+</form>
+
+<p>Don't have an account? <a href="signup.html">Signup here</a></p>
+
+<script src="script.js"></script>
+</body>
+</html>
