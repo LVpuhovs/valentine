@@ -62,20 +62,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.getElementById("scan-button").addEventListener("click", function() {
     const scanner = document.getElementById("scanner");
-    scanner.style.display = "block"; // Ensure scanner is visible
+    scanner.style.display = "block";  // Ensure the video element is visible
 
-    // Initialize Quagga.js to scan barcodes using the device's camera
+    // Make sure the video element is correctly initialized and attached to the DOM
+    const videoElement = document.getElementById('scanner');
+    if (videoElement) {
+        console.log("Video element found!");
+    } else {
+        console.error("Video element not found!");
+    }
+
+    // Initialize Quagga.js
     Quagga.init({
         inputStream: {
             name: "Live",
             type: "LiveStream",
-            target: scanner, // Target the <video> element
+            target: videoElement,  // Attach to the <video> element
             constraints: {
-                facingMode: "environment" // Ensure the rear camera is used on mobile devices
+                facingMode: "environment"  // Use the rear camera on mobile devices
             }
         },
         decoder: {
-            readers: ["ean_reader"] // EAN-13 format (common for ISBN barcodes)
+            readers: ["ean_reader"]  // EAN-13 format (common for ISBN barcodes)
         }
     }, function(err) {
         if (err) {
@@ -83,17 +91,21 @@ document.getElementById("scan-button").addEventListener("click", function() {
             alert("Error initializing scanner. Please ensure camera permissions are granted.");
             return;
         }
-        Quagga.start(); // Start the scanner
+
+        // Log to confirm initialization success
+        console.log("Quagga initialized successfully!");
+        Quagga.start();  // Start the scanner
     });
 
     // Handle barcode detection
     Quagga.onDetected(function(result) {
-        const isbn = result.codeResult.code; // ISBN code detected
-        document.getElementById("isbn").value = isbn;
-        Quagga.stop(); // Stop the scanner after detection
-        scanner.style.display = "none"; // Hide the video stream
+        const isbn = result.codeResult.code;
+        document.getElementById("isbn").value = isbn;  // Set the ISBN value
+        Quagga.stop();  // Stop the scanner once a barcode is detected
+        scanner.style.display = "none";  // Hide the video stream
     });
 });
+
 
 
 document.getElementById("fetch-details").addEventListener("click", function() {
