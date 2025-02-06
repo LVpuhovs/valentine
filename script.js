@@ -8,6 +8,7 @@ function generateRandomString(length) {
     return result;
 }
 
+
 // Function to parse cookies and return a cookie object
 function getCookies() {
     const cookies = document.cookie.split(';').reduce((acc, cookie) => {
@@ -24,8 +25,17 @@ function isLoggedIn() {
     return cookies.username && cookies.sessionId;
 }
 
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex
+    return hashHex;
+}
+
 // Handle login form submission
-function login(event) {
+async function login(event) {
     event.preventDefault();
 
     const username = document.getElementById("username").value;
@@ -36,7 +46,9 @@ function login(event) {
     const user = users.find(u => u.username === username);
 
     if (user) {
-        if (user.password === password) {
+        const hashedPassword = await hashPassword(password); // Hash the input password
+
+        if (user.password === hashedPassword) { // Compare the hashed passwords
             const newSessionId = generateRandomString(32);
             document.cookie = `username=${username}; sessionId=${newSessionId}; max-age=604800; path=/`;
             localStorage.setItem("currentUser", username);
@@ -50,17 +62,19 @@ function login(event) {
 }
 
 // Handle signup form submission
-function signup(event) {
+async function signup(event) {
     event.preventDefault();
 
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
+    const hashedPassword = await hashPassword(password); // Hash the password
+
     const sessionId = generateRandomString(32);
 
     // Store user data in localStorage (or cookies)
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push({ username, password, sessionId });
+    users.push({ username, password: hashedPassword, sessionId });
     localStorage.setItem("users", JSON.stringify(users));
 
     document.cookie = `username=${username}; sessionId=${sessionId}; max-age=604800; path=/`;
