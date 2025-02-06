@@ -136,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutButton = document.getElementById("logout-btn");
     const signupButton = document.getElementById("signup-btn");
     const loginButton = document.getElementById("login-btn");
+    const welcomeMessage = document.getElementById("welcome-message");
 
     const currentUser = localStorage.getItem("currentUser");
 
@@ -148,6 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
         logoutButton.style.display = "inline-block"; // Show logout button
         loginButton.style.display = "none"; // Hide login button
         signupButton.style.display = "none"; // Hide signup button
+
+        welcomeMessage.textContent = `Hey, ${currentUser}!`;
 
         // Show books for the logged-in user
         renderBooks(currentUser);
