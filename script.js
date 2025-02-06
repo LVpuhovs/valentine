@@ -62,49 +62,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.getElementById("scan-button").addEventListener("click", function() {
     const scanner = document.getElementById("scanner");
-    scanner.style.display = "block";  // Ensure the video element is visible
+    const videoElement = document.getElementById("scanner");
 
-    // Make sure the video element is correctly initialized and attached to the DOM
-    const videoElement = document.getElementById('scanner');
-    if (videoElement) {
-        console.log("Video element found!");
-    } else {
-        console.error("Video element not found!");
-    }
+    // Ensure the video element is visible when the button is clicked
+    scanner.style.display = "block";
 
-    // Initialize Quagga.js
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: videoElement,  // Attach to the <video> element
-            constraints: {
-                facingMode: "environment"  // Use the rear camera on mobile devices
-            }
-        },
-        decoder: {
-            readers: ["ean_reader"]  // EAN-13 format (common for ISBN barcodes)
-        }
-    }, function(err) {
-        if (err) {
-            console.error("Quagga initialization error:", err);
-            alert("Error initializing scanner. Please ensure camera permissions are granted.");
-            return;
-        }
+    // Access the camera and display it in the video element
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(stream) {
+            videoElement.srcObject = stream;  // Set the video source to the camera stream
+            videoElement.play();  // Start playing the video stream
 
-        // Log to confirm initialization success
-        console.log("Quagga initialized successfully!");
-        Quagga.start();  // Start the scanner
-    });
+            // Initialize Quagga.js after the video stream is available
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: videoElement,  // Use the video element for scanning
+                    constraints: {
+                        facingMode: "environment"  // Ensure rear camera is used
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader"]  // EAN-13 format for ISBN
+                }
+            }, function(err) {
+                if (err) {
+                    console.error("Quagga initialization error:", err);
+                    alert("Error initializing scanner. Please ensure camera permissions are granted.");
+                    return;
+                }
+
+                Quagga.start();  // Start Quagga scanning after initialization
+            });
+        })
+        .catch(function(err) {
+            console.error("Camera access error:", err);
+            alert("Unable to access the camera. Please ensure permissions are granted.");
+        });
 
     // Handle barcode detection
     Quagga.onDetected(function(result) {
         const isbn = result.codeResult.code;
-        document.getElementById("isbn").value = isbn;  // Set the ISBN value
-        Quagga.stop();  // Stop the scanner once a barcode is detected
-        scanner.style.display = "none";  // Hide the video stream
+        document.getElementById("isbn").value = isbn;  // Set the detected ISBN
+        Quagga.stop();  // Stop scanning after detecting the barcode
+        scanner.style.display = "none";  // Hide the camera feed after detection
     });
 });
+
 
 
 
