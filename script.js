@@ -61,56 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("scan-button").addEventListener("click", function() {
-    const scanner = document.getElementById("scanner");
-    const videoElement = document.getElementById("scanner");
-
-    // Ensure the video element is visible when the button is clicked
-    scanner.style.display = "block";
-
-    // Access the camera and display it in the video element
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(function(stream) {
-            videoElement.srcObject = stream;  // Set the video source to the camera stream
-            videoElement.play();  // Start playing the video stream
-
-            // Initialize Quagga.js after the video stream is available
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: videoElement,  // Use the video element for scanning
-                    constraints: {
-                        facingMode: "environment"  // Ensure rear camera is used
-                    }
-                },
-                decoder: {
-                    readers: ["ean_reader"]  // EAN-13 format for ISBN
-                }
-            }, function(err) {
-                if (err) {
-                    console.error("Quagga initialization error:", err);
-                    alert("Error initializing scanner. Please ensure camera permissions are granted.");
-                    return;
-                }
-
-                Quagga.start();  // Start Quagga scanning after initialization
-            });
-        })
-        .catch(function(err) {
-            console.error("Camera access error:", err);
-            alert("Unable to access the camera. Please ensure permissions are granted.");
-        });
-
-    // Handle barcode detection
-    Quagga.onDetected(function(result) {
-        const isbn = result.codeResult.code;
-        document.getElementById("isbn").value = isbn;  // Set the detected ISBN
-        Quagga.stop();  // Stop scanning after detecting the barcode
-        scanner.style.display = "none";  // Hide the camera feed after detection
-    });
+    window.location.href = 'google.com/search?q=barcode';
 });
-
-
+document.getElementById("scan-button").addEventListener("click", function() {
+    window.location.href = 'itms://itunes.apple.com/app/qr-scanner/id368494118';
+});
 
 
 document.getElementById("fetch-details").addEventListener("click", function() {
@@ -130,3 +85,18 @@ document.getElementById("fetch-details").addEventListener("click", function() {
         })
         .catch(error => console.error("Error fetching book info:", error));
 });
+
+document.getElementById("use-scanner-app").addEventListener("click", function() {
+    if (navigator.userAgent.match(/Android/i)) {
+        // For Android, suggest an external barcode scanner app like "QR & Barcode Scanner"
+        alert("Please open your Barcode Scanner app, scan the barcode, and enter the ISBN manually.");
+    } else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+        // For iOS, suggest opening a barcode scanning app.
+        alert("Please open your Barcode Scanner app, scan the barcode, and enter the ISBN manually.");
+    } else {
+        // Suggest the user use a desktop scanner
+        alert("Please use an external barcode scanner to scan the code.");
+    }
+});
+
+
