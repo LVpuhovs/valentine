@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Books</title>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+</head>
+<body>
+
+<h1>My books</h1>
+<nav>
+    <ul>
+        <li><a href="index.html" class="button">Home</a></li>
+        <li><a href="books.html" class="button active">My Books</a></li>
+    </ul>
+</nav>
+
+<form id="book-form">
+    <input type="text" id="title" placeholder="Book Title" required>
+    <input type="file" id="image" accept="image/*" required>
+    <button type="submit">Add Book</button>
+</form>
+
+<button id="scan-button">Scan ISBN</button>
+<video id="scanner" style="width: 100%; display: none;"></video>
+<input type="text" id="isbn" placeholder="ISBN Number">
+<button id="fetch-details">Fetch Book Info</button>
+
+<div class="book-grid" id="book-list">
+    <!-- Books will be dynamically inserted here -->
+</div>
+
+<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+</body>
+</html>
